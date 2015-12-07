@@ -14,7 +14,7 @@ function clone(repo, dest) {
 
 function extractOffset(push, dir) {
 	return clone(push.repo.name, dir).then(function () {
-		return pify(childProcess.execFile.bind(childProcess), Promise)('git', ['log', '-1', '--format="%aI"', push.payload.commits[0].sha], {encoding: 'utf8', cwd: dir});
+		return pify(childProcess.execFile.bind(childProcess), Promise)('git', ['log', '-1', '--format="%aI"', '--ignore-missing', push.payload.commits[0].sha], {encoding: 'utf8', cwd: dir});
 	});
 }
 
