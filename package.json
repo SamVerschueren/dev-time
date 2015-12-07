@@ -1,0 +1,50 @@
+{
+  "name": "dev-time",
+  "version": "0.0.0",
+  "description": "Get the current local time of a GitHub user.",
+  "license": "MIT",
+  "repository": "SamVerschueren/dev-time",
+  "author": {
+    "name": "Sam Verschueren",
+    "email": "sam.verschueren@gmail.com",
+    "url": "github.com/SamVerschueren"
+  },
+  "engines": {
+    "node": ">=0.12.0"
+  },
+  "scripts": {
+    "test": "xo && ava"
+  },
+  "files": [
+    "index.js"
+  ],
+  "keywords": [
+    "github",
+    "gh",
+    "developer",
+    "dev",
+    "user",
+    "local",
+    "time",
+    "timezone",
+    "date"
+  ],
+  "dependencies": {
+    "del": "^2.2.0",
+    "gh-got": "^2.3.0",
+    "latest-push": "^0.1.0",
+    "moment-timezone": "^0.4.1",
+    "pinkie-promise": "^2.0.0",
+    "tempfile": "^1.1.1"
+  },
+  "devDependencies": {
+    "ava": "*",
+    "moment": "^2.10.6",
+    "xo": "*"
+  },
+  "xo": {
+    "ignores": [
+      "test.js"
+    ]
+  }
+}
