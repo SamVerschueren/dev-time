@@ -34,6 +34,8 @@
     "gh-got": "^2.3.0",
     "latest-push": "^0.1.0",
     "moment-timezone": "^0.4.1",
+    "object-assign": "^4.0.1",
+    "pify": "^2.3.0",
     "pinkie-promise": "^2.0.0",
     "tempfile": "^1.1.1"
   },

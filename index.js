@@ -1,20 +1,21 @@
 'use strict';
 var childProcess = require('child_process');
 var latestPush = require('latest-push');
+var pify = require('pify');
 var Promise = require('pinkie-promise');
 var tempfile = require('tempfile');
 var del = require('del');
 var moment = require('moment-timezone');
+var objectAssign = require('object-assign');
 
 function clone(repo, dest) {
-	var gitUrl = 'git://github.com/' + repo + '.git';
-	childProcess.execSync('git clone ' + gitUrl + ' ' + dest, {stdio: [undefined, undefined, undefined]});
+	return pify(childProcess.execFile.bind(childProcess), Promise)('git', ['clone', 'https://github.com/' + repo + '.git', dest], {stdio: 'ignore'});
 }
 
 function extractOffset(push, dir) {
-	clone(push.repo.name, dir);
-
-	return childProcess.execSync('cd ' + dir + '; git log -1 --format="%aI" ' + push.payload.commits[0].sha, {encoding: 'utf8', stdio: [undefined, undefined, undefined]});
+	return clone(push.repo.name, dir).then(function () {
+		return pify(childProcess.execFile.bind(childProcess), Promise)('git', ['log', '-1', '--format="%aI"', push.payload.commits[0].sha], {encoding: 'utf8', cwd: dir});
+	});
 }
 
 function clean(dir) {
@@ -26,15 +27,15 @@ module.exports = function (user, opts) {
 		return Promise.reject(new TypeError('Expected a user'));
 	}
 
-	opts = opts || {};
-	opts.pages = 10;
+	opts = objectAssign({}, opts, {pages: 10});
 
 	var dir = tempfile();
 
 	return latestPush(user, opts)
 		.then(function (push) {
-			var offset = extractOffset(push, dir);
-
+			return extractOffset(push, dir);
+		})
+		.then(function (offset) {
 			clean(dir);
 
 			return moment.utc().utcOffset(offset).format();
