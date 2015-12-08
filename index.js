@@ -62,7 +62,7 @@ module.exports = function (user, opts) {
 	var stored = conf.get(user);
 
 	if (stored && moment().isSame(stored, 'day')) {
-		return Promise.resolve(stored);
+		return Promise.resolve(moment.utc().utcOffset(stored).format());
 	}
 
 	opts = objectAssign({exclude: []}, opts, {pages: 10});
