@@ -7,7 +7,10 @@ var tempfile = require('tempfile');
 var del = require('del');
 var moment = require('moment-timezone');
 var objectAssign = require('object-assign');
+var Configstore = require('configstore');
+var pkg = require('./package.json');
 
+var conf = new Configstore(pkg.name);
 var dir;
 
 function clone(repo, dest) {
@@ -56,13 +59,21 @@ module.exports = function (user, opts) {
 		return Promise.reject(new TypeError('Expected a user'));
 	}
 
+	var stored = conf.get(user);
+
+	if (stored && moment().isSame(stored, 'day')) {
+		return Promise.resolve(stored);
+	}
+
 	opts = objectAssign({exclude: []}, opts, {pages: 10});
 
 	return fetchPush(user, opts)
 		.then(function (offset) {
 			clean();
 
-			return moment.utc().utcOffset(offset).format();
+			var date = moment.utc().utcOffset(offset).format();
+			conf.set(user, date);
+			return date;
 		})
 		.catch(function (err) {
 			clean();

@@ -30,6 +30,7 @@
     "date"
   ],
   "dependencies": {
+    "configstore": "^1.3.0",
     "del": "^2.2.0",
     "gh-got": "^2.3.0",
     "latest-push": "^0.2.0",
