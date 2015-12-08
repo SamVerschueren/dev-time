@@ -10,7 +10,7 @@
     "url": "github.com/SamVerschueren"
   },
   "engines": {
-    "node": ">=0.12.0"
+    "node": ">=0.10.0"
   },
   "scripts": {
     "test": "xo && ava"
@@ -32,7 +32,7 @@
   "dependencies": {
     "del": "^2.2.0",
     "gh-got": "^2.3.0",
-    "latest-push": "^0.1.0",
+    "latest-push": "^0.2.0",
     "moment-timezone": "^0.4.1",
     "object-assign": "^4.0.1",
     "pify": "^2.3.0",
