@@ -6,7 +6,7 @@ import {name as pkgName} from './package.json';
 
 const conf = new Configstore(pkgName);
 
-test.after(() => {
+test.before(() => {
 	conf.clear();
 });
 
