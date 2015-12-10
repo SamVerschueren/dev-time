@@ -11,7 +11,6 @@ var Configstore = require('configstore');
 var pkg = require('./package.json');
 
 var conf = new Configstore(pkg.name);
-var dir;
 
 function clone(repo, dest) {
 	return pify(childProcess.execFile.bind(childProcess), Promise)('git', ['clone', 'https://github.com/' + repo + '.git', dest], {stdio: 'ignore'});
@@ -34,17 +33,15 @@ function clean(dir) {
 function fetchPush(user, opts) {
 	var pushId;
 
-	dir = tempfile();
-
 	return latestPush(user, opts)
 		.then(function (push) {
 			pushId = push.id;
 
-			return extractOffset(push, dir);
+			return extractOffset(push, opts.dir);
 		})
 		.then(function (offset) {
 			if (offset === '') {
-				clean(dir);
+				clean(opts.dir);
 
 				opts.exclude.push(pushId);
 				return fetchPush(user, opts);
@@ -65,18 +62,18 @@ module.exports = function (user, opts) {
 		return Promise.resolve(moment.utc().utcOffset(stored).format());
 	}
 
-	opts = objectAssign({exclude: []}, opts, {pages: 10});
+	opts = objectAssign({exclude: []}, opts, {pages: 10, dir: tempfile()});
 
 	return fetchPush(user, opts)
 		.then(function (offset) {
-			clean();
+			clean(opts.dir);
 
 			var date = moment.utc().utcOffset(offset).format();
 			conf.set(user, date);
 			return date;
 		})
 		.catch(function (err) {
-			clean();
+			clean(opts.dir);
 
 			throw err;
 		});
