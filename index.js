@@ -10,16 +10,17 @@ var objectAssign = require('object-assign');
 var Configstore = require('configstore');
 var pkg = require('./package.json');
 
+var execFileP = pify(childProcess.execFile.bind(childProcess), Promise);
 var conf = new Configstore(pkg.name);
 
 function clone(repo, dest) {
-	return pify(childProcess.execFile.bind(childProcess), Promise)('git', ['clone', 'https://github.com/' + repo + '.git', dest], {stdio: 'ignore'});
+	return execFileP('git', ['clone', '--template=""', 'https://github.com/' + repo + '.git', dest], {stdio: 'ignore'});
 }
 
 function extractOffset(push, dir) {
 	return clone(push.repo.name, dir)
 		.then(function () {
-			return pify(childProcess.execFile.bind(childProcess), Promise)('git', ['log', '-1', '--format="%aI"', '--ignore-missing', push.payload.commits.pop().sha], {encoding: 'utf8', cwd: dir});
+			return execFileP('git', ['log', '-1', '--format="%aI"', '--ignore-missing', push.payload.commits.pop().sha], {encoding: 'utf8', cwd: dir});
 		})
 		.then(function (offset) {
 			return offset.trim();
