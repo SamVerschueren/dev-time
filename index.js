@@ -28,23 +28,21 @@ function extractOffset(push, dir) {
 }
 
 function clean(dir) {
-	del.sync(dir, {force: true});
+	return del(dir, {force: true});
 }
 
 function fetchPush(user, opts) {
-	var pushId;
-
-	return latestPush(user, opts)
+	return clean(opts.dir)
+		.then(function () {
+			return latestPush(user, opts);
+		})
 		.then(function (push) {
-			pushId = push.id;
+			opts.exclude.push(push.id);
 
 			return extractOffset(push, opts.dir);
 		})
 		.then(function (offset) {
 			if (offset === '') {
-				clean(opts.dir);
-
-				opts.exclude.push(pushId);
 				return fetchPush(user, opts);
 			}
 
@@ -67,11 +65,13 @@ module.exports = function (user, opts) {
 
 	return fetchPush(user, opts)
 		.then(function (offset) {
-			clean(opts.dir);
-
 			var date = moment.utc().utcOffset(offset).format();
+
 			conf.set(user, date);
-			return date;
+
+			return clean(opts.dir).then(function () {
+				return date;
+			});
 		})
 		.catch(function (err) {
 			clean(opts.dir);
