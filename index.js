@@ -10,16 +10,17 @@ var objectAssign = require('object-assign');
 var Configstore = require('configstore');
 var pkg = require('./package.json');
 
+var execFileP = pify(childProcess.execFile.bind(childProcess), Promise);
 var conf = new Configstore(pkg.name);
 
 function clone(repo, dest) {
-	return pify(childProcess.execFile.bind(childProcess), Promise)('git', ['clone', 'https://github.com/' + repo + '.git', dest], {stdio: 'ignore'});
+	return execFileP('git', ['clone', '--template=""', 'https://github.com/' + repo + '.git', dest], {stdio: 'ignore'});
 }
 
 function extractOffset(push, dir) {
 	return clone(push.repo.name, dir)
 		.then(function () {
-			return pify(childProcess.execFile.bind(childProcess), Promise)('git', ['log', '-1', '--format="%aI"', '--ignore-missing', push.payload.commits.pop().sha], {encoding: 'utf8', cwd: dir});
+			return execFileP('git', ['log', '-1', '--format="%aI"', '--ignore-missing', push.payload.commits.pop().sha], {encoding: 'utf8', cwd: dir});
 		})
 		.then(function (offset) {
 			return offset.trim();
@@ -27,23 +28,21 @@ function extractOffset(push, dir) {
 }
 
 function clean(dir) {
-	del.sync(dir, {force: true});
+	return del(dir, {force: true});
 }
 
 function fetchPush(user, opts) {
-	var pushId;
-
-	return latestPush(user, opts)
+	return clean(opts.dir)
+		.then(function () {
+			return latestPush(user, opts);
+		})
 		.then(function (push) {
-			pushId = push.id;
+			opts.exclude.push(push.id);
 
 			return extractOffset(push, opts.dir);
 		})
 		.then(function (offset) {
 			if (offset === '') {
-				clean(opts.dir);
-
-				opts.exclude.push(pushId);
 				return fetchPush(user, opts);
 			}
 
@@ -66,11 +65,13 @@ module.exports = function (user, opts) {
 
 	return fetchPush(user, opts)
 		.then(function (offset) {
-			clean(opts.dir);
-
 			var date = moment.utc().utcOffset(offset).format();
+
 			conf.set(user, date);
-			return date;
+
+			return clean(opts.dir).then(function () {
+				return date;
+			});
 		})
 		.catch(function (err) {
 			clean(opts.dir);
