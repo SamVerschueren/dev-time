@@ -74,8 +74,8 @@ module.exports = function (user, opts) {
 			});
 		})
 		.catch(function (err) {
-			clean(opts.dir);
-
-			throw err;
+			return clean(opts.dir).then(function () {
+				throw err;
+			});
 		});
 };
