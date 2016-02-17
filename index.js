@@ -14,7 +14,7 @@ var execFileP = pify(childProcess.execFile.bind(childProcess), Promise);
 var conf = new Configstore(pkg.name);
 
 function clone(repo, dest) {
-	return execFileP('git', ['clone', '--template=""', 'https://github.com/' + repo + '.git', dest], {stdio: 'ignore'});
+	return execFileP('git', ['clone', '--no-checkout', '--template=""', 'https://github.com/' + repo + '.git', dest], {stdio: 'ignore'});
 }
 
 function extractOffset(push, dir) {
