@@ -1,6 +1,6 @@
 {
   "name": "dev-time",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "description": "Get the current local time of a GitHub user.",
   "license": "MIT",
   "repository": "SamVerschueren/dev-time",
