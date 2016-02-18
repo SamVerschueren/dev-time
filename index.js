@@ -20,7 +20,7 @@ function clone(repo, dest) {
 function extractOffset(push, dir) {
 	return clone(push.repo.name, dir)
 		.then(function () {
-			return execFileP('git', ['log', '-1', '--format="%aI"', '--ignore-missing', push.payload.commits.pop().sha], {encoding: 'utf8', cwd: dir});
+			return execFileP('git', ['log', '-1', '--format="%aD"', '--ignore-missing', push.payload.commits.pop().sha], {encoding: 'utf8', cwd: dir});
 		})
 		.then(function (offset) {
 			return offset.trim();
