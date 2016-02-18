@@ -1,5 +1,5 @@
 import test from 'ava';
-import moment from 'moment';
+import moment from 'moment-timezone';
 import Configstore from 'configstore';
 import fn from './';
 import {name as pkgName} from './package.json';
@@ -10,13 +10,13 @@ test.before(() => {
 	conf.clear();
 });
 
-test('error', async t => {
-	await t.throws(fn(), 'Expected a user');
+test('error', t => {
+	t.throws(fn(), 'Expected a user');
 });
 
 test('result', async t => {
 	const time = await fn('SamVerschueren');
 
-	t.is(conf.get('SamVerschueren'), moment().format());
-	t.is(time, moment().format());
+	t.is(conf.get('SamVerschueren'), moment().tz('Europe/Brussels').format());
+	t.is(time, moment().tz('Europe/Brussels').format());
 });
