@@ -1,8 +1,8 @@
 import test from 'ava';
 import moment from 'moment-timezone';
 import Configstore from 'configstore';
-import fn from './';
 import {name as pkgName} from './package.json';
+import fn from './';
 
 const conf = new Configstore(pkgName);
 
