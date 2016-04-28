@@ -40,7 +40,7 @@ Type: `string`
 
 GitHub [access token](https://github.com/settings/tokens/new).
 
-Can be overriden globally with the `GITHUB_TOKEN` environment variable.
+Can be set globally with the `GITHUB_TOKEN` environment variable.
 
 
 ## Related
