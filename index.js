@@ -1,80 +1,63 @@
 'use strict';
-var childProcess = require('child_process');
-var latestPush = require('latest-push');
-var pify = require('pify');
-var Promise = require('pinkie-promise');
-var tempfile = require('tempfile');
-var del = require('del');
-var moment = require('moment-timezone');
-var objectAssign = require('object-assign');
-var Configstore = require('configstore');
-var pkg = require('./package.json');
+const latestPush = require('latest-push');
+const tempfile = require('tempfile');
+const del = require('del');
+const moment = require('moment-timezone');
+const Configstore = require('configstore');
+const execa = require('execa');
+const pkg = require('./package.json');
 
-var execFileP = pify(childProcess.execFile.bind(childProcess), Promise);
-var conf = new Configstore(pkg.name);
+const conf = new Configstore(pkg.name);
 
-function clone(repo, dest) {
-	return execFileP('git', ['clone', '--no-checkout', '--template=""', 'https://github.com/' + repo + '.git', dest], {stdio: 'ignore'});
-}
+const clean = dir => del(dir, {force: true});
+const clone = (repo, dest) => execa('git', ['clone', '--no-checkout', '--template=""', `https://github.com/${repo}.git`, dest], {stdio: 'ignore'});
 
-function extractOffset(push, dir) {
+const extractOffset = (push, dir) => {
 	return clone(push.repo.name, dir)
-		.then(function () {
-			return execFileP('git', ['log', '-1', '--format="%aD"', '--ignore-missing', push.payload.commits.pop().sha], {encoding: 'utf8', cwd: dir});
-		})
-		.then(function (offset) {
-			return offset.trim();
-		});
-}
+		.then(() => execa.stdout('git', ['log', '-1', '--format="%aD"', '--ignore-missing', push.payload.commits.pop().sha], {encoding: 'utf8', cwd: dir}))
+		.then(offset => offset.trim());
+};
 
-function clean(dir) {
-	return del(dir, {force: true});
-}
-
-function fetchPush(user, opts) {
+const fetchPush = (user, opts) => {
 	return clean(opts.dir)
-		.then(function () {
-			return latestPush(user, opts);
-		})
-		.then(function (push) {
+		.then(() => latestPush(user, opts))
+		.then(push => {
 			opts.exclude.push(push.id);
 
 			return extractOffset(push, opts.dir);
 		})
-		.then(function (offset) {
+		.then(offset => {
 			if (offset === '') {
 				return fetchPush(user, opts);
 			}
 
 			return offset;
 		});
-}
+};
 
-module.exports = function (user, opts) {
+module.exports = (user, opts) => {
 	if (typeof user !== 'string') {
 		return Promise.reject(new TypeError('Expected a user'));
 	}
 
-	var stored = conf.get(user);
+	const stored = conf.get(user);
 
 	if (stored && moment().isSame(stored, 'day')) {
 		return Promise.resolve(moment.utc().utcOffset(stored).format());
 	}
 
-	opts = objectAssign({exclude: []}, opts, {pages: 10, dir: tempfile()});
+	opts = Object.assign({exclude: []}, opts, {pages: 10, dir: tempfile()});
 
 	return fetchPush(user, opts)
-		.then(function (offset) {
-			var date = moment.utc().utcOffset(offset).format();
+		.then(offset => {
+			const date = moment.utc().utcOffset(offset).format();
 
 			conf.set(user, date);
 
-			return clean(opts.dir).then(function () {
-				return date;
-			});
+			return clean(opts.dir).then(() => date);
 		})
-		.catch(function (err) {
-			return clean(opts.dir).then(function () {
+		.catch(err => {
+			return clean(opts.dir).then(() => {
 				throw err;
 			});
 		});
