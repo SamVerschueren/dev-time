@@ -40,7 +40,6 @@
   },
   "devDependencies": {
     "ava": "*",
-    "moment-timezone": "^0.4.1",
     "xo": "*"
   },
   "xo": {
