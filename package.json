@@ -30,7 +30,7 @@
     "date"
   ],
   "dependencies": {
-    "configstore": "^2.0.0",
+    "conf": "^0.11.0",
     "del": "^2.2.0",
     "execa": "^0.4.0",
     "gh-got": "^4.0.0",

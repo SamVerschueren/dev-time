@@ -3,11 +3,10 @@ const latestPush = require('latest-push');
 const tempfile = require('tempfile');
 const del = require('del');
 const moment = require('moment-timezone');
-const Configstore = require('configstore');
+const Conf = require('conf');
 const execa = require('execa');
-const pkg = require('./package.json');
 
-const conf = new Configstore(pkg.name);
+const config = new Conf();
 
 const clean = dir => del(dir, {force: true});
 const clone = (repo, dest) => execa('git', ['clone', '--no-checkout', '--template=""', `https://github.com/${repo}.git`, dest], {stdio: 'ignore'});
@@ -40,7 +39,7 @@ module.exports = (user, opts) => {
 		return Promise.reject(new TypeError('Expected a user'));
 	}
 
-	const stored = conf.get(user);
+	const stored = config.get(user);
 
 	if (stored && moment().isSame(stored, 'day')) {
 		return Promise.resolve(moment.utc().utcOffset(stored).format());
@@ -52,7 +51,7 @@ module.exports = (user, opts) => {
 		.then(offset => {
 			const date = moment.utc().utcOffset(offset).format();
 
-			conf.set(user, date);
+			config.set(user, date);
 
 			return clean(opts.dir).then(() => date);
 		})
