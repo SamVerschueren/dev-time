@@ -1,7 +1,7 @@
 {
   "name": "dev-time",
   "version": "1.0.1",
-  "description": "Get the current local time of a GitHub user.",
+  "description": "Get the current local time of a GitHub user",
   "license": "MIT",
   "repository": "SamVerschueren/dev-time",
   "author": {
@@ -41,8 +41,5 @@
   "devDependencies": {
     "ava": "*",
     "xo": "*"
-  },
-  "xo": {
-    "esnext": true
   }
 }
