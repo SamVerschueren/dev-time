@@ -46,6 +46,7 @@ Can be set globally with the `GITHUB_TOKEN` environment variable.
 ## Related
 
 - [dev-time-cli](https://github.com/SamVerschueren/dev-time-cli) - CLI for this module
+- http://dev-time.today - Website for this module
 
 
 ## License
