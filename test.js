@@ -9,8 +9,8 @@ test.beforeEach(() => {
 	conf.clear();
 });
 
-test('error', t => {
-	t.throws(m(), 'Expected a user');
+test('error', async t => {
+	await t.throws(m(), 'Expected a user');
 });
 
 test('result', async t => {
