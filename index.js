@@ -55,9 +55,9 @@ module.exports = (user, opts) => {
 
 			return clean(opts.dir).then(() => date);
 		})
-		.catch(err => {
+		.catch(error => {
 			return clean(opts.dir).then(() => {
-				throw err;
+				throw error;
 			});
 		});
 };
