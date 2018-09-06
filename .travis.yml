@@ -4,3 +4,6 @@ env:
     secure: ok6Zkqx5eFdVjzrskKX5ghxm99FTrtOXzA5vl11hd/3N0949seJufhdieCY45QMiAmgsOk/A9kZIZKWpQEeJCYsiTs2SlnrohSq52C3s1TeUOcUBc3zK8+Mj6nXfMx6oj51ArIBW+IvAXugxKhIWoYsvfNdYPAocp37Zw0lv4j5A/W9+66SQfgvxOnZcaGW8pMLvSIgLF/hntnGI7s6p+cqmFqgU0E53UCelktDMhRTvk6L4da0Ut5nNj7FMRiyN+SSssKvQoBfGGr9Gi2Kf+plrGru3V7RlFTHJwqfs7OPVTgrjg+Ml2ckTzGei2tiwNAzbZ3ATzlPieD2LA+CP/a55NloShbAv6ptjHR1knWaFXqkmukAPUJqTbbzM/LxHI+4Mtk1goHCrG8N0GVBblTvGG2HbPhv4RwHxMkCI7s+rlLJLccnVl6emRu7RgN0oAvWbYlkCh0VV0pW6rihu1mz+B32C2EtQJ+PyoluQYYpCuvtmavaK9fWM45EdYL4WSEQ1p6T6PFYDww6V/7PMsmaI/UkS6/8OF5WAm6FV1k3x//Xopnv/Dvu/HIapspC1d/x/P5w/SnFueBOeme8hcTUjpoaKLLurVJm35qB9Cn63V6CfM5M3M8klVj2nhzL8p/BsxENxWSq/qmPmc7gq5/7R29tvTmbBoqxB8QjGIlg=
 node_js:
   - '6'
+cache:
+  directories:
+    - node_modules
