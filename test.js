@@ -1,7 +1,7 @@
 import test from 'ava';
 import moment from 'moment-timezone';
 import Conf from 'conf';
-import m from './';
+import m from '.';
 
 const conf = new Conf();
 
